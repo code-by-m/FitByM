@@ -41,7 +41,7 @@ Veri sıfırlama profil/hedefleri korur, fitness tablolarını boşaltır. İlk 
 
 Bkz. [dağıtım kılavuzu](docs/DEPLOYMENT.md). Vite base ve manifest scope `/FitByM/`; HashRouter sayesinde yenilemede sunucu yönlendirmesi gerekmez. Workflow `main` push ve manuel tetikleme ile kontrollerden sonra Pages'e dağıtır.
 
-16 Kasım 2026 tarihinde `https://api.github.com/repos/code-by-m/FitByM` isteği **404** döndü. Depo özel olabilir veya henüz oluşturulmamış olabilir. Beklenen `https://code-by-m.github.io/FitByM/` adresinin gerçek Pages yapılandırması ve canlı yayını **doğrulanmadı**. Bu çalışma GitHub'a gönderilmedi.
+16 Kasım 2026'da [public GitHub deposu](https://github.com/code-by-m/FitByM) oluşturuldu ve ilk yayın tamamlandı. **Canlı uygulama: https://code-by-m.github.io/FitByM/**. HTTPS 200, JS/CSS/marka varlıkları, tüm rotalarda yenileme, manifest/ikonlar, service worker kapsamı ve IndexedDB başlangıcı gerçek Chromium üzerinden doğrulandı. Aynı izole oturumda offline yeniden açılış da geçti. [Başarılı dağıtım](https://github.com/code-by-m/FitByM/actions/runs/43858682938), uygulama commit'i: `24e5316`.
 
 ## iPhone kurulumu
 
@@ -79,8 +79,8 @@ npm.cmd run test:e2e
 
 Chromium testleri ayrı sentetik bağlamlarda çalışır; gerçek kullanıcı kayıtlarını silmez. Aktif antrenman sırasında güncelleme ertelenir. Runtime dependency audit temiz; geliştirme/derleme araçlarında 12 dolaylı audit kaydı sürüyor.
 
-GitHub CLI/oturum ve repo bağlantısı bu ortamda hazır değil. Pages yayını yapılmadı. [Dağıtım ve kimlik doğrulama adımları](docs/DEPLOYMENT.md), [ayrıntılı sonuçlar](docs/STATUS.md), [üretim kontrol listesi](docs/PRODUCTION_CHECKLIST.md), [fiziksel iPhone kabul listesi](docs/IPHONE_TESTING.md).
+Faz 8'de GitHub CLI kuruldu, `code-by-m` hesabı doğrulandı ve Pages, GitHub Actions/HTTPS ile yayına alındı. CI'da 15 test ve 4 Chromium senaryosu geçti; canlı site ayrıca doğrulandı. [Dağıtım adımları](docs/DEPLOYMENT.md), [ayrıntılı sonuçlar](docs/STATUS.md), [üretim kontrol listesi](docs/PRODUCTION_CHECKLIST.md), [fiziksel iPhone kabul listesi](docs/IPHONE_TESTING.md).
 
 ## Doğrulama sınırları
 
-Birim testleri fake-indexeddb, uçtan uca testler gerçek Chromium IndexedDB/service worker kullanır. Chromium mobil görünümü Safari veya fiziksel iPhone testi değildir. Yerel offline/update başarıları canlı GitHub Pages doğrulaması sayılmaz. Fiziksel iPhone kurulum, VoiceOver, storage eviction ve standalone senaryoları ayrıca doğrulanmalıdır. Başarıyla çalıştırılan kontroller `docs/STATUS.md` içinde kaydedilir.
+Birim testleri fake-indexeddb, uçtan uca testler gerçek Chromium IndexedDB/service worker kullanır. Canlı Pages üzerinde başlangıç, rotalar ve offline yeniden açılış doğrulandı; A→B güncelleme senaryosu CI'ın izole üretim provasında sınandı. Chromium mobil görünümü Safari veya fiziksel iPhone testi değildir. Fiziksel iPhone kurulum, VoiceOver, storage eviction ve standalone senaryoları ayrıca doğrulanmalıdır. Başarıyla çalıştırılan kontroller `docs/STATUS.md` içinde kaydedilir.

@@ -2,11 +2,11 @@
 
 ## Mevcut erişim durumu
 
-16 Kasım 2026 kontrolü: Bu klasör Git deposu değil; `git remote -v` çalışmıyor. `gh` komutu kurulu değil. GH_TOKEN/GITHUB_TOKEN ortam değişkenleri yok; değerleri okunmadı veya yazdırılmadı. GitHub eklentisi henüz bağlı değil.
+16 Kasım 2026 Faz 8 sonucu: GitHub CLI 2.104.0 kuruldu, `code-by-m` hesabı Windows keyring üzerinden doğrulandı; public `code-by-m/FitByM` deposu oluşturulup `main` gönderildi. Pages source GitHub Actions ve HTTPS zorunlu. [Canlı uygulama](https://code-by-m.github.io/FitByM/) HTTPS 200 ve gerçek Chromium kontrolleriyle doğrulandı. Yayındaki uygulama commit'i `24e5316`; [başarılı workflow](https://github.com/code-by-m/FitByM/actions/runs/43858682938).
 
-Anonim istekler: `api.github.com/users/code-by-m` → 200; `api.github.com/repos/code-by-m/FitByM` → 404; beklenen Pages adresi → 404. Hesap adı mevcut. Kimlik doğrulaması olmadan deponun yokluğu ile özel/erişilemeyen depo ayrıştırılamaz. Kaynak gönderilmedi, depo oluşturulmadı ve yayın yapılmadı.
+Önceki 404'ler, authenticated kontrolde bulunmayan deponun henüz oluşturulmamış olmasıyla çözüldü. Kısıtlı ortam keyring'e erişemediğinde 401 döndü; yetkili yürütme ortamında aynı oturum çalıştı. Bu bir token paylaşma gereksinimi değildir. Git Schannel hatasında yalnızca ilgili push komutunda `git -c http.sslBackend=openssl push ...` kullanıldı; TLS doğrulaması kapatılmadı. Aşağıdaki kurulum adımları yeni cihazlar ve sonraki yayınlar için referanstır.
 
-## GitHub erişimini açma (kullanıcı işlemi gerekli)
+## Yeni cihazda GitHub erişimini açma
 
 GitHub eklentisini kurup hesabınızı bağlayabilir veya aşağıdaki CLI yolunu kullanabilirsiniz. Tokenı sohbete ya da dosyaya yazmayın; web girişini kullanın.
 
@@ -86,7 +86,7 @@ RUN_ID'yi gerçek run numarasıyla değiştirin. Workflow build job'unda yalnız
 
 ## Canlı yayını doğrulama
 
-Başarılı Actions sonucu tek başına yeterli değildir. Settings → Pages ve deploy job `page_url` çıktısını karşılaştırın. Beklenen adres `https://code-by-m.github.io/FitByM/`; **henüz doğrulanmış canlı adres değildir**.
+Başarılı Actions sonucu tek başına yeterli değildir. Settings → Pages ve deploy job `page_url` çıktısını karşılaştırın. `https://code-by-m.github.io/FitByM/` ilk yayında gerçek HTTPS isteği ve Chromium ile doğrulandı; sonraki yayınlarda aşağıdaki kontrolleri tekrar uygulayın.
 
 - Gerçek HTTPS adresine GET → 200; başlık FitByM; konsolda yükleme hatası yok.
 - `/FitByM/#/programlar`, `#/antrenman`, `#/gelisim`, `#/ayarlar`, `#/egzersizler`, `#/gecmis` açılıyor ve yenileniyor. Hash sonrası bölüm sunucuya gönderilmez; Pages'te özel yönlendirme gerekmez.

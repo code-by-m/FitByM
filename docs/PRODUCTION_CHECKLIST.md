@@ -13,7 +13,7 @@ Bu belge yerel otomasyon ile canlı/fiziksel cihaz doğrulamasını ayırır. Ca
 - [x] Build/deploy job'ları ayrıldı; Pages/OIDC yazma yetkisi yalnızca deploy job'unda.
 - [x] main push ve manuel workflow_dispatch tetiklemesi.
 - [x] Asset/PWA ve YAML sözleşme kontrolü `npm run verify:production` içinde.
-- [ ] GitHub Actions runner'ında gerçek workflow çalışması (GitHub erişimi bekliyor).
+- [x] GitHub Actions runner'ında gerçek workflow çalışması: build ve deploy başarılı (Faz 8).
 - [x] actionlint 1.7.12 workflow kontrolü geçti; ShellCheck/Pyflakes alt kontrolleri bu ortamda yok.
 
 ## Veri koruma
@@ -41,7 +41,7 @@ Bu belge yerel otomasyon ile canlı/fiziksel cihaz doğrulamasını ayırır. Ca
 - [x] Yerel üretim çıktısında gerçek Chromium service worker/cache testleri tanımlandı.
 - [x] İlk online açılış → kontrol devralma → offline reload → lazy rota → set kaydı → backup akışı sınanır.
 - [x] Bekleyen SW sürümü ve kullanıcı onaylı etkinleştirme testi; sonrasında veri karşılaştırması.
-- [ ] Canlı HTTPS Pages üzerinde cache/scope ve ikinci offline açılış.
+- [x] Canlı HTTPS Pages üzerinde scope, cache ve offline yeniden açılış Chromium'da doğrulandı (Faz 8).
 - [ ] Fiziksel iPhone ana ekrandan kurulum, offline yeniden başlatma ve A→B güncellemesi.
 
 ## Güvenlik ve bağımlılıklar
@@ -56,11 +56,11 @@ Kaynaklar: [minimatch advisory](https://github.com/advisories/GHSA-g3hv-75wg-m24
 
 ## Yayın kapısı
 
-- [ ] Doğru GitHub hesabı doğrulandı; repo varlığı/görünürlüğü/izinler authenticated kontrol edildi.
-- [ ] Mevcut uzak geçmiş korunarak kaynak gönderildi.
-- [ ] Pages source GitHub Actions; HTTPS ve environment izinleri hazır.
-- [ ] Gerçek Actions run typecheck/lint/test/build/PWA/Chromium kontrolleri geçti.
-- [ ] Gerçek page_url GET 200, tüm rotalarda yenileme ve statik assetler doğrulandı.
+- [x] `code-by-m` hesabı doğrulandı; public repo ve yönetim/yazma izinleri authenticated kontrol edildi.
+- [x] Boş olduğu doğrulanan uzak depoya kaynak gönderildi; force push yapılmadı.
+- [x] Pages source GitHub Actions; HTTPS ve main environment izni hazır.
+- [x] Gerçek Actions run typecheck/lint/test/build/PWA/Chromium kontrolleri geçti: 15 test, 4 e2e.
+- [x] Gerçek page_url GET 200, tüm rotalarda yenileme ve statik assetler doğrulandı.
 - [ ] [IPHONE_TESTING.md](IPHONE_TESTING.md) cihaz/sürüm/sonuç kaydıyla tamamlandı.
 
 Kesin çalıştırma sonuçları ve bilinen engeller: [STATUS.md](STATUS.md). GitHub yetki adımları: [DEPLOYMENT.md](DEPLOYMENT.md).

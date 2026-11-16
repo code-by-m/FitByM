@@ -1,6 +1,27 @@
 ﻿# Uygulama durumu — 16 Kasım 2026
 
-## Faz 7 sonucu
+## Faz 8 — ilk yayın doğrulandı
+
+16 Kasım 2026'da GitHub CLI 2.104.0 kuruldu ve kullanıcı tarayıcı onayıyla `code-by-m` hesabı doğrulandı. Hesap yönetim/yazma yetkisine sahip. Authenticated sorguda bulunmayan `code-by-m/FitByM` public olarak oluşturuldu ve boş olduğu doğrulandı. Mevcut Git kimliği kullanıldı; kimlik uydurulmadı.
+
+- İlk commit/push: `f31430b`; hazırlanmış 51 dosyada yasaklı artifact/backup yolu veya gizli anahtar örüntüsü bulunmadı. Uzak geçmiş yoktu; force push yapılmadı.
+- İlk CI'da Linux axe taraması dekoratif hero yazısını düşük kontrast olarak işaretledi. Yalnızca dekoratif yazı aynı görünümle CSS pseudo-elementlerine taşındı; test kuralı kapatılmadı, resmî artwork ve işlevler değiştirilmedi.
+- Yayındaki uygulama commit'i: `24e53160082c41836467c54fbfc17bb3125da1f0`.
+- [Başarılı workflow](https://github.com/code-by-m/FitByM/actions/runs/43858682938): build ve deploy başarılı; typecheck/lint/build/PWA kontrolleri, 15 test ve 4 Chromium senaryosu geçti.
+- Pages build_type `workflow`, HTTPS zorunlu; github-pages ortamı `main` dalına izin veriyor. Yazma/OIDC yetkileri yalnızca deploy job'unda.
+- **Doğrulanmış canlı adres: https://code-by-m.github.io/FitByM/** — gerçek HTTPS GET 200.
+- Canlı JS, CSS, CodeByM simgesi, manifest, SW ve apple-touch-icon GET 200; manifest scope/start_url `/FitByM/`, standalone, ikon PNG boyutları doğru.
+- İzole Chromium oturumunda 7 ekran, hash rota yenilemeleri, dar ekran taşması ve logo yüklemesi kontrol edildi; JavaScript pageerror yok.
+- Canlı SW `activated`, kapsam `https://code-by-m.github.io/FitByM/`. Yeni izole IndexedDB: 12 egzersiz, 2 program, 0 ölçüm ve 0 antrenman; sahte geçmiş oluşturulmadı.
+- Canlı uygulamada offline reload ve program ekranının açılması geçti. Gerçek kullanıcı veritabanına dokunulmadı; kontrol ayrı geçici tarayıcı bağlamında yapıldı.
+
+GitHub girişi Windows keyring'de saklanır; projeye token yazılmadı. Kısıtlı ortam keyring'e erişemediğinde 401 verdi; yetkili yürütme ortamında oturum doğrulandı. Git Schannel sorunu için yalnızca push komutlarında OpenSSL backend kullanıldı; TLS doğrulaması kapatılmadı.
+
+Kalan işler: fiziksel iPhone/Safari kabulü ve bilinen 12 dolaylı dev/build audit kaydının upstream düzeltmelerle giderilmesi. Canlı sürümler arası A→B güncellemesi fiziksel cihazda henüz doğrulanmadı. Bu yayında IndexedDB v1 şeması değiştirilmedi.
+
+Aşağıdaki Faz 7 bölümleri **yayından önceki tarihsel durumdur**; eski erişim engelleri Faz 8'de çözüldü.
+
+## Faz 7 sonucu (yayından önce)
 
 Mevcut MVP üzerinde üretime hazırlık, hata düzeltmeleri ve yerel gerçek tarayıcı doğrulaması tamamlandı. **GitHub Pages yayını yapılmadı.** Kimliği doğrulanmış GitHub erişimi ve fiziksel iPhone kabulü bekliyor. Beklenen adres doğrulanmış canlı URL olarak sunulmaz.
 
