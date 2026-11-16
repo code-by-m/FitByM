@@ -78,12 +78,8 @@ export default function Dashboard() {
         <div className="hero-art" aria-hidden="true">
           <div className="orbit orbit-one" />
           <div className="orbit orbit-two" />
-          <span>
-            FIT
-            <br />
-            <i>BY M</i>
-          </span>
-          <div className="art-caption">DAHA GÜÇLÜ BİR SEN</div>
+          <span />
+          <div className="art-caption" />
         </div>
       </section>
       <section className="stat-grid">
