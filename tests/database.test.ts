@@ -30,6 +30,28 @@ const custom = (): Exercise => ({
   updatedAt: now(),
 });
 describe('Veritabanı ve kayıt bütünlüğü', () => {
+  it('hazır egzersizin medyasını değiştirirken kimliğini ve yönergelerini korur; yedekten geri gelir', async () => {
+    const original = (await db.exercises.get('exercise-0'))!;
+    const media = {
+      imageUrl: 'https://media.example.test/squat.png',
+      videoUrl: 'https://media.example.test/squat.mp4',
+    };
+    await repo.saveExerciseMedia(original.id, media);
+    db.close();
+    await db.open();
+    const updated = (await db.exercises.get(original.id))!;
+    expect(updated.instructions).toBe(original.instructions);
+    expect(updated.isCustom).toBe(false);
+    expect(updated.imageUrl).toBe(media.imageUrl);
+    const backup = await exportBackup(db);
+    await repo.saveExerciseMedia(original.id, { imageUrl: '', videoUrl: '' });
+    await importBackup(backup, db);
+    expect((await db.exercises.get(original.id))?.videoUrl).toBe(media.videoUrl);
+    await expect(
+      repo.saveExerciseMedia(original.id, { ...media, videoUrl: 'javascript:alert(1)' }),
+    ).rejects.toThrow();
+    expect((await db.exercises.get(original.id))?.videoUrl).toBe(media.videoUrl);
+  });
   it('ilk kurulumda egzersiz, A/B program ve tercihleri oluşturur; sahte ölçüm eklemez', async () => {
     expect(await db.exercises.count()).toBe(12);
     expect(await db.workoutPlans.count()).toBe(2);

@@ -204,3 +204,38 @@ test('waiting service worker update is gated during workout and preserves data a
     await fs.writeFile('dist/sw.js', original);
   }
 });
+
+test('exercise media editor saves links and retains them after reload', async ({ page }) => {
+  const image = 'https://media.example.test/squat.png';
+  await page.route(image, async (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'image/png',
+      body: await fs.readFile('public/icons/icon-192.png'),
+    }),
+  );
+  await open(page, 'egzersizler');
+  await page.getByRole('button', { name: /Bodyweight Squat/ }).click();
+  await page.getByRole('button', { name: 'Resim / video düzenle' }).click();
+  await page.getByLabel('Resim bağlantısı').fill(image);
+  await page.getByLabel('Video bağlantısı').fill('https://media.example.test/squat.mp4');
+  await page.getByRole('button', { name: 'Medyayı kaydet' }).click();
+  const picture = page.getByRole('img', { name: 'Bodyweight Squat uygulama görseli' });
+  await expect(picture).toHaveAttribute('src', image);
+  await expect
+    .poll(() => picture.evaluate((img) => (img as HTMLImageElement).naturalWidth))
+    .toBe(192);
+  await expect(page.locator('video')).toHaveAttribute('preload', 'none');
+  await expect(page.locator('video')).toHaveAttribute('playsinline', '');
+  await page.reload();
+  await page.getByRole('button', { name: /Bodyweight Squat/ }).click();
+  await expect(picture).toHaveAttribute('src', image);
+  await page.getByRole('button', { name: 'Resim / video düzenle' }).click();
+  await page.getByLabel('Video bağlantısı').fill('https://video.example.test/watch');
+  await page.getByRole('button', { name: 'Medyayı kaydet' }).click();
+  await expect(page.getByRole('link', { name: 'Videoyu yeni sekmede izle' })).toHaveAttribute(
+    'href',
+    'https://video.example.test/watch',
+  );
+  await expect(page.locator('iframe,video')).toHaveCount(0);
+});

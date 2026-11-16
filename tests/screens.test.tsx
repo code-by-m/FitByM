@@ -28,6 +28,22 @@ const wrap = (component: React.ReactNode) =>
     </MemoryRouter>,
   );
 describe('Günlük kullanım ekranları', () => {
+  it('hazır egzersize formdan medya ekler ve detayda gösterir', async () => {
+    wrap(<Exercises />);
+    fireEvent.click(await screen.findByRole('button', { name: /Bodyweight Squat/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Resim / video düzenle' }));
+    fireEvent.change(screen.getByLabelText('Resim bağlantısı'), {
+      target: { value: 'https://media.example.test/squat.png' },
+    });
+    fireEvent.change(screen.getByLabelText('Video bağlantısı'), {
+      target: { value: 'https://media.example.test/squat.mp4' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Medyayı kaydet' }));
+    expect(
+      await screen.findByRole('img', { name: 'Bodyweight Squat uygulama görseli' }),
+    ).toHaveAttribute('src', 'https://media.example.test/squat.png');
+    expect((await db.exercises.get('exercise-0'))?.isCustom).toBe(false);
+  });
   it('ana sayfada ilk açılışta tamamlanmış antrenman veya ölçüm uydurmaz', async () => {
     wrap(<Dashboard />);
     expect(await screen.findByText('Henüz ölçüm eklenmedi')).toBeInTheDocument();

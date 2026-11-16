@@ -17,8 +17,16 @@ import {
   type Goals,
   type Profile,
 } from '../types/models';
+import { exerciseMediaSchema } from '../lib/media';
 export class FitnessRepository {
   constructor(readonly database: FitDatabase = db) {}
+  async saveExerciseMedia(id: string, input: { imageUrl: string; videoUrl: string }) {
+    const media = exerciseMediaSchema.parse(input);
+    await this.database.transaction('rw', this.database.exercises, async () => {
+      if (!(await this.database.exercises.get(id))) throw Error('Egzersiz bulunamadı.');
+      await this.database.exercises.update(id, { ...media, updatedAt: now() });
+    });
+  }
   async saveExercise(value: Exercise) {
     const item = exerciseSchema.parse(value);
     const existing = await this.database.exercises.get(item.id);

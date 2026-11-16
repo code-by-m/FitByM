@@ -8,6 +8,72 @@ import { repository } from '../database/repository';
 import { exerciseSchema, uid, now, type Exercise } from '../types/models';
 import { Modal, Empty } from '../components/Modal';
 import { useAction } from '../components/Notices';
+import { ExerciseMedia } from '../components/ExerciseMedia';
+import { exerciseMediaSchema } from '../lib/media';
+function MediaEditor({
+  exercise,
+  onSaved,
+}: {
+  exercise: Exercise;
+  onSaved: (value: Exercise) => void;
+}) {
+  const act = useAction();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<{ imageUrl: string; videoUrl: string }>({
+    resolver: zodResolver(exerciseMediaSchema),
+    defaultValues: { imageUrl: exercise.imageUrl, videoUrl: exercise.videoUrl },
+  });
+  return (
+    <form
+      onSubmit={handleSubmit((value) =>
+        act(async () => {
+          await repository.saveExerciseMedia(exercise.id, value);
+          onSaved({ ...exercise, ...value });
+        }, 'Egzersiz medyası kaydedildi.'),
+      )}
+    >
+      <label>
+        Resim bağlantısı
+        <input
+          type="url"
+          placeholder="https://…"
+          {...register('imageUrl')}
+          aria-invalid={Boolean(errors.imageUrl)}
+        />
+      </label>
+      {errors.imageUrl && (
+        <p role="alert" className="error">
+          {errors.imageUrl.message}
+        </p>
+      )}
+      <label>
+        Video bağlantısı
+        <input
+          type="url"
+          placeholder="https://…"
+          {...register('videoUrl')}
+          aria-invalid={Boolean(errors.videoUrl)}
+        />
+      </label>
+      {errors.videoUrl && (
+        <p role="alert" className="error">
+          {errors.videoUrl.message}
+        </p>
+      )}
+      <p className="small-note">
+        Doğrudan resim ve MP4/WebM/MOV video adresi ekleyebilirsin. YouTube ve diğer video sayfaları
+        yeni sekmede açılır. Alanı boş bırakıp kaydederek medyayı kaldırabilirsin. Bağlantılar
+        yedeğine dahil edilir; dosyalar cihaza indirilmez.
+      </p>
+      <button className="primary" disabled={isSubmitting}>
+        Medyayı kaydet
+      </button>
+    </form>
+  );
+}
 function ExerciseForm({ value, onClose }: { value?: Exercise; onClose: () => void }) {
   const act = useAction();
   const {
@@ -98,6 +164,7 @@ export default function Exercises() {
   const [level, setLevel] = useState('');
   const [editor, setEditor] = useState<Exercise | true>();
   const [detail, setDetail] = useState<Exercise>();
+  const [mediaEditing, setMediaEditing] = useState<Exercise>();
   const act = useAction();
   const filtered = exercises.filter(
     (e) =>
@@ -185,11 +252,25 @@ export default function Exercises() {
       )}
       {detail && (
         <Modal title={detail.name} onClose={() => setDetail(undefined)}>
+          <ExerciseMedia
+            key={`${detail.id}-${detail.imageUrl}-${detail.videoUrl}`}
+            name={detail.name}
+            imageUrl={detail.imageUrl}
+            videoUrl={detail.videoUrl}
+          />
           <p>{detail.description}</p>
           <p>{detail.instructions}</p>
           <p className="muted">
             {detail.primaryMuscleGroup} · {detail.equipmentType}
           </p>
+          <button
+            onClick={() => {
+              setMediaEditing(detail);
+              setDetail(undefined);
+            }}
+          >
+            Resim / video düzenle
+          </button>
           {detail.isCustom && (
             <div className="actions">
               <button
@@ -214,6 +295,23 @@ export default function Exercises() {
               </button>
             </div>
           )}
+        </Modal>
+      )}
+      {mediaEditing && (
+        <Modal
+          title={`${mediaEditing.name} — Medya`}
+          onClose={() => {
+            setDetail(mediaEditing);
+            setMediaEditing(undefined);
+          }}
+        >
+          <MediaEditor
+            exercise={mediaEditing}
+            onSaved={(value) => {
+              setMediaEditing(undefined);
+              setDetail(value);
+            }}
+          />
         </Modal>
       )}
     </>

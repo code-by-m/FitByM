@@ -1095,6 +1095,25 @@ legend {
 .current-exercise {
   border-color: var(--primary);
 }
+.exercise-media figure {
+  margin: 0 0 16px;
+}
+.exercise-media img,
+.exercise-media video {
+  display: block;
+  width: 100%;
+  max-height: 360px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: var(--bg);
+  margin-bottom: 12px;
+}
+.exercise-media video {
+  aspect-ratio: 16 / 9;
+}
+.exercise-media figcaption {
+  font-size: 12px;
+}
 
 /* Keep user-created names and grid inputs inside narrow phone layouts. */
 input,

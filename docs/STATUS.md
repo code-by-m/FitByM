@@ -1,12 +1,20 @@
 ﻿# Uygulama durumu — 16 Kasım 2026
 
+## Son geliştirme — egzersiz medyası
+
+Hazır ve özel egzersizlerde detay → **Resim / video düzenle** ile HTTPS resim/video bağlantıları eklenebilir veya kaldırılabilir. Resimler detayda gösterilir; doğrudan MP4/WebM/MOV dosyaları controls/playsinline ve preload=none ile oynatılır; diğer video sayfaları yeni sekmede açılır. Yükleme hataları için açıklama ve kaynak bağlantısı vardır. Harici medya offline cache'e alınmaz ve dosyaları yedeğe kopyalanmaz; yalnızca URL'ler mevcut JSON yedeğinde saklanır.
+
+IndexedDB v1 şeması aynı kaldı; mevcut imageUrl/videoUrl alanları kullanılır. Hazır egzersizlerin yönerge ve kimlikleri değiştirilmeden medya güncellenir. HTTPS dışı ve kimlik bilgisi içeren yeni URL'ler reddedilir; eski yedeklerdeki geçersiz URL'ler renderer tarafından yüklenmez. Varsayılan egzersizlere doğrulanmamış medya eklenmedi.
+
+Bu değişiklik için yerel typecheck, lint, build ve üretim doğrulaması başarılı; **21 test ve 5 gerçek Chromium senaryosu** geçti. Yeni browser testi medya formu, resim yükleme, video oynatıcı ayarları, yenileme sonrası kalıcılık ve harici video bağlantısını kapsar. Video codec/harici sağlayıcı erişimi cihaz ve kaynak tarafından belirlenir; fiziksel iPhone medya kabulü henüz yapılmadı.
+
 ## Faz 8 — ilk yayın doğrulandı
 
 16 Kasım 2026'da GitHub CLI 2.104.0 kuruldu ve kullanıcı tarayıcı onayıyla `code-by-m` hesabı doğrulandı. Hesap yönetim/yazma yetkisine sahip. Authenticated sorguda bulunmayan `code-by-m/FitByM` public olarak oluşturuldu ve boş olduğu doğrulandı. Mevcut Git kimliği kullanıldı; kimlik uydurulmadı.
 
 - İlk commit/push: `f31430b`; hazırlanmış 51 dosyada yasaklı artifact/backup yolu veya gizli anahtar örüntüsü bulunmadı. Uzak geçmiş yoktu; force push yapılmadı.
 - İlk CI'da Linux axe taraması dekoratif hero yazısını düşük kontrast olarak işaretledi. Yalnızca dekoratif yazı aynı görünümle CSS pseudo-elementlerine taşındı; test kuralı kapatılmadı, resmî artwork ve işlevler değiştirilmedi.
-- Yayındaki uygulama commit'i: `24e53160082c41836467c54fbfc17bb3125da1f0`.
+- İlk yayın uygulama commit'i: `24e53160082c41836467c54fbfc17bb3125da1f0`.
 - [Başarılı workflow](https://github.com/code-by-m/FitByM/actions/runs/43858682938): build ve deploy başarılı; typecheck/lint/build/PWA kontrolleri, 15 test ve 4 Chromium senaryosu geçti.
 - Pages build_type `workflow`, HTTPS zorunlu; github-pages ortamı `main` dalına izin veriyor. Yazma/OIDC yetkileri yalnızca deploy job'unda.
 - **Doğrulanmış canlı adres: https://code-by-m.github.io/FitByM/** — gerçek HTTPS GET 200.
