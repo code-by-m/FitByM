@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+*.local
+.env*
+.npm-cache/
+
+*.tsbuildinfo
+FitByM-yedek-*.json
+FitByM-*.csv
+.playwright/
+playwright-report/
+test-results/
