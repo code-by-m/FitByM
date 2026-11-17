@@ -1,6 +1,14 @@
 ﻿# Uygulama durumu — 16 Kasım 2026
 
-## Son geliştirme — hazır hareket önizlemeleri (17 Kasım 2026)
+## Son geliştirme — sıralı antrenman ekranı (17 Kasım 2026)
+
+Antrenman programındaki hareketler üstte numaralı bir sıralama üzerinden seçilir; aynı anda bir hareketin açık önizlemesi ve setleri gösterilir. Önizleme artık açılır bölümün arkasında değildir. Önceki/sonraki düğmeleri ve doğrudan hareket seçimi vardır. Bir hareketin tüm setleri tamamlandığında veya hareket atlandığında sıradaki tamamlanmamış harekete geçilir. Tamamlanan hareketler incelenebilir ve atlanan hareket geri eklenebilir.
+
+Setler IndexedDB'ye kaydedildikten sonra güncel kayıtlardan ilerleme hesaplanır. Sayfa yenilendiğinde ilk tamamlanmamış hareket sürdürülür; setler, ağırlıklar, notlar ve dinlenme saati korunur. Şema/tohum değişikliği yoktur. Masaüstünde önizleme ve setler yan yana; telefonda önizleme üstte gösterilir. Hareket sıralaması oturum snapshot'ındaki sortOrder'dır.
+
+Typecheck, lint, 24 test, üretim derlemesi ve PWA doğrulaması geçti. 7 Chromium senaryosuyla gezinme, görünür önizleme, otomatik geçiş, reload sonrası devam, tamamlanmış setlerin korunması ve atla/geri ekle kontrol edildi. Aktif ekranın koyu temada axe taraması ve mobil taşma kontrolü geçti; mobil/masaüstü ekran görüntüleri incelendi. Fiziksel iPhone testi yapılmadı.
+
+## Önceki geliştirme — hazır hareket önizlemeleri (17 Kasım 2026)
 
 Kullanıcının medya yüklemesi gerekmemesi için başlangıçtaki 12 egzersize özgün SVG şemaları eklendi. Egzersiz kartları başlangıç/hareket pozisyonlarını hazır gösterir; detayda iki pozisyon oynatılıp durdurulabilir. Antrenman ekranında açılabilir hareket rehberi vardır. Yüzüstü hareketler üstten görünüm olarak etiketlenir. Gösterimler şematiktir; gerçek video veya fotoğraf olarak sunulmaz.
 

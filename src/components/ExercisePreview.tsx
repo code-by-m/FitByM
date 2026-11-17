@@ -93,9 +93,7 @@ export function ExercisePreview({
               {playing ? 'Durdur' : 'Hareketi oynat'}
             </button>
           </div>
-          <p className="small-note">
-            Şematik iki pozisyon gösterimi. Uygulama adımları için aşağıdaki açıklamayı takip et.
-          </p>
+          <p className="small-note">Şematik iki pozisyon gösterimi.</p>
         </figcaption>
       )}
     </figure>

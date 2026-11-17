@@ -1142,12 +1142,107 @@ legend {
 .workout-guide {
   margin: 0 0 16px;
 }
-.workout-guide summary {
-  min-height: 44px;
-  padding: 12px 0;
-  cursor: pointer;
+.workout-sequence {
+  margin-bottom: 22px;
+}
+.workout-steps {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  list-style: none;
+  padding: 4px 4px 12px;
+  margin: 0;
+}
+.workout-steps li {
+  flex: 1 0 155px;
+  min-width: 0;
+}
+.workout-steps button {
+  width: 100%;
+  height: 100%;
+  justify-content: flex-start;
+  text-align: left;
+  font-size: 12px;
+}
+.workout-steps button[aria-current='step'] {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 12%, var(--surface));
+}
+.workout-steps small {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.workout-steps button > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.step-number {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg);
   color: var(--primary);
-  font-size: 13px;
+}
+.workout-exercise-body.has-preview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 24px;
+  align-items: start;
+}
+.workout-guide .movement-preview {
+  margin-bottom: 0;
+}
+.workout-set-panel {
+  min-width: 0;
+}
+.workout-set-panel > button {
+  margin-top: 16px;
+}
+.workout-step-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+  margin-top: 22px;
+}
+.workout-step-actions > span {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.workout-complete {
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+@media (max-width: 1000px) {
+  .workout-exercise-body.has-preview {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+}
+@media (max-width: 480px) {
+  .workout-step-actions {
+    flex-wrap: wrap;
+  }
+  .workout-step-actions button {
+    flex: 1;
+    font-size: 11px;
+    padding: 10px 8px;
+  }
+  .workout-step-actions > span {
+    order: 2;
+    width: 100%;
+    text-align: center;
+  }
 }
 
 /* Keep user-created names and grid inputs inside narrow phone layouts. */

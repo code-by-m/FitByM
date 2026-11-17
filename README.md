@@ -26,6 +26,7 @@ Yerel adres: http://localhost:5173/FitByM/ . Üretim çıktısı `dist/` içinde
 - Hazır/özel egzersiz detayında **Resim / video düzenle** ile HTTPS medya bağlantıları ekleme/kaldırma. Resimler detayda, doğrudan MP4/WebM/MOV videolar inline oynatıcıda; video sayfaları yeni sekmede açılır. Medya dosyaları offline önbelleğe alınmaz; bağlantılar JSON yedeğine dahildir.
 - Program oluşturma, güncelleme, sıralama, set/tekrar/süre/dinlenme/not, kopyalama ve silme.
 - Aktif seansı sürdürme, set kaydı, ek set, egzersiz atlama, dinlenme sayacı, bitirme/iptal ve geçmiş ayrıntıları.
+- Antrenmanda program sırasına göre tek hareket görünümü; üstte sıralı hareket seçimi, her zaman açık önizleme, önceki/sonraki gezinme ve tüm setler tamamlanınca otomatik geçiş. Masaüstünde önizleme/setler yan yana; telefonda önizleme setlerin üstünde.
 - Ağırlık/bel/göğüs/kalça/kol kaydı, grafikler, haftalık tutarlılık ve egzersiz performansı.
 - Düzenlenebilir profil/hedefler, sistem/açık/koyu tema, metrik birimler.
 - Sürüm kontrollü JSON yedek, doğrulama, önizleme, açık onay ve transaction ile geri yükleme; CSV dışa aktarma.

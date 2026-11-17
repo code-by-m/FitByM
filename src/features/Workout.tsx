@@ -16,12 +16,23 @@ export function clock(seconds: number) {
     .toString()
     .padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
 }
-function SetRow({ set, exercise }: { set: WorkoutSet; exercise: SessionExercise }) {
+function SetRow({
+  set,
+  exercise,
+  onCompleted,
+}: {
+  set: WorkoutSet;
+  exercise: SessionExercise;
+  onCompleted: () => Promise<void>;
+}) {
   const [value, setValue] = useState(set);
   const act = useAction();
   const save = (next: WorkoutSet) => {
     setValue(next);
-    void act(() => repository.saveSet(next));
+    void act(async () => {
+      await repository.saveSet(next);
+      if (next.isCompleted) await onCompleted();
+    });
   };
   return (
     <div className={`set-row ${set.isCompleted ? 'done' : ''}`}>
@@ -93,6 +104,7 @@ export default function Workout() {
   const navigate = useNavigate();
   const time = useClock();
   const act = useAction();
+  const [selectedId, setSelectedId] = useState<string>();
   const data = useLiveQuery(async () => {
     const session = await db.workoutSessions.where('status').equals('InProgress').first();
     if (!session) return null;
@@ -128,6 +140,44 @@ export default function Workout() {
   const current = exercises.find(
     (ex) => !ex.skipped && sets.some((s) => s.workoutSessionExerciseId === ex.id && !s.isCompleted),
   );
+  const focused = exercises.find((ex) => ex.id === selectedId) ?? current ?? exercises.at(-1);
+  const focusedIndex = exercises.findIndex((ex) => ex.id === focused?.id);
+  const visibleExercises = focused ? [{ exercise: focused, index: focusedIndex }] : [];
+  const completedExercises = exercises.filter(
+    (ex) =>
+      !ex.skipped &&
+      sets.some((s) => s.workoutSessionExerciseId === ex.id) &&
+      sets.filter((s) => s.workoutSessionExerciseId === ex.id).every((s) => s.isCompleted),
+  );
+  const selectExercise = (id: string) => {
+    setSelectedId(id);
+    requestAnimationFrame(() => document.getElementById('active-exercise')?.focus());
+  };
+  const advanceIfFinished = async (id: string) => {
+    // Read committed records, including rapid consecutive set completions.
+    const latestExercises = await db.workoutSessionExercises
+      .where('workoutSessionId')
+      .equals(session.id)
+      .sortBy('sortOrder');
+    const latestSets = await db.workoutSets
+      .where('workoutSessionExerciseId')
+      .anyOf(latestExercises.map((ex) => ex.id))
+      .toArray();
+    const finished = latestExercises.find((ex) => ex.id === id);
+    if (
+      !finished ||
+      (!finished.skipped &&
+        latestSets.some((s) => s.workoutSessionExerciseId === id && !s.isCompleted))
+    )
+      return;
+    const pending = latestExercises.filter(
+      (ex) =>
+        !ex.skipped &&
+        latestSets.some((s) => s.workoutSessionExerciseId === ex.id && !s.isCompleted),
+    );
+    const next = pending.find((ex) => ex.sortOrder > finished.sortOrder) ?? pending[0];
+    setSelectedId((previous) => (previous && previous !== id ? previous : (next?.id ?? id)));
+  };
   return (
     <>
       <div className="heading">
@@ -157,10 +207,44 @@ export default function Workout() {
           {rest ? 'Dinlenmeyi bitir' : '60 sn dinlen'}
         </button>
       </div>
-      {exercises.map((ex, i) => (
+      <nav className="workout-sequence" aria-label="Antrenman hareketleri">
+        <ol className="workout-steps">
+          {exercises.map((ex, i) => (
+            <li key={ex.id}>
+              <button
+                aria-current={focused?.id === ex.id ? 'step' : undefined}
+                onClick={() => selectExercise(ex.id)}
+              >
+                <span className="step-number">{i + 1}</span>
+                <span>
+                  {ex.exerciseNameSnapshot}
+                  <small>
+                    {ex.skipped
+                      ? 'Atlandı'
+                      : completedExercises.some((item) => item.id === ex.id)
+                        ? 'Tamamlandı'
+                        : focused?.id === ex.id
+                          ? 'Seçili hareket'
+                          : 'Bekliyor'}
+                  </small>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      </nav>
+      {!current && done > 0 && (
+        <p className="workout-complete" role="status">
+          Kalan hareket yok. Setlerini kontrol edip antrenmanı bitirebilirsin.
+        </p>
+      )}
+      {visibleExercises.map(({ exercise: ex, index: i }) => (
         <section
           className={`card workout-exercise ${current?.id === ex.id ? 'current-exercise' : ''} ${ex.skipped ? 'skipped' : ''}`}
           key={ex.id}
+          id="active-exercise"
+          tabIndex={-1}
+          aria-label={`${i + 1}. hareket: ${ex.exerciseNameSnapshot}`}
         >
           <div className="section-title">
             <div>
@@ -179,36 +263,61 @@ export default function Workout() {
               onClick={() =>
                 void act(async () => {
                   await db.workoutSessionExercises.update(ex.id, { skipped: !ex.skipped });
+                  if (!ex.skipped) await advanceIfFinished(ex.id);
                 })
               }
             >
               {ex.skipped ? 'Geri ekle' : 'Atla'}
             </button>
           </div>
-          {!ex.skipped && (
-            <>
-              {getExercisePreview(ex.exerciseId, ex.exerciseNameSnapshot) && (
-                <details className="workout-guide">
-                  <summary>Hareket önizlemesi</summary>
-                  <ExercisePreview
-                    exerciseId={ex.exerciseId}
-                    name={ex.exerciseNameSnapshot}
-                    controls
-                  />
-                </details>
-              )}
-              {sets
-                .filter((s) => s.workoutSessionExerciseId === ex.id)
-                .sort((a, b) => a.setNumber - b.setNumber)
-                .map((s) => (
-                  <SetRow key={`${s.id}-${s.isCompleted}`} set={s} exercise={ex} />
-                ))}
-              <button onClick={() => void act(() => repository.addSet(ex.id))}>
-                <Plus size={16} />
-                Set ekle
-              </button>
-            </>
-          )}
+          <div
+            className={`workout-exercise-body ${getExercisePreview(ex.exerciseId, ex.exerciseNameSnapshot) ? 'has-preview' : ''}`}
+          >
+            {getExercisePreview(ex.exerciseId, ex.exerciseNameSnapshot) && (
+              <div className="workout-guide" aria-label="Hareket önizlemesi">
+                <ExercisePreview
+                  exerciseId={ex.exerciseId}
+                  name={ex.exerciseNameSnapshot}
+                  controls
+                />
+              </div>
+            )}
+            {!ex.skipped ? (
+              <div className="workout-set-panel">
+                {sets
+                  .filter((s) => s.workoutSessionExerciseId === ex.id)
+                  .sort((a, b) => a.setNumber - b.setNumber)
+                  .map((s) => (
+                    <SetRow
+                      key={`${s.id}-${s.isCompleted}`}
+                      set={s}
+                      exercise={ex}
+                      onCompleted={() => advanceIfFinished(ex.id)}
+                    />
+                  ))}
+                <button onClick={() => void act(() => repository.addSet(ex.id))}>
+                  <Plus size={16} />
+                  Set ekle
+                </button>
+              </div>
+            ) : (
+              <p className="muted">Bu hareket atlandı. İstersen geri ekleyebilirsin.</p>
+            )}
+          </div>
+          <div className="workout-step-actions">
+            <button disabled={i === 0} onClick={() => selectExercise(exercises[i - 1].id)}>
+              ← Önceki hareket
+            </button>
+            <span>
+              {i + 1} / {exercises.length}
+            </span>
+            <button
+              disabled={i === exercises.length - 1}
+              onClick={() => selectExercise(exercises[i + 1].id)}
+            >
+              Sonraki hareket →
+            </button>
+          </div>
         </section>
       ))}
       <section className="card">

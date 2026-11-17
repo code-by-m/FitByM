@@ -270,8 +270,60 @@ test('all built-in exercises have ready previews, including offline and during a
   await open(page, 'programlar');
   await page.getByRole('button', { name: 'Başla', exact: true }).first().click();
   const guide = page.locator('.workout-guide').first();
-  await guide.locator('summary').click();
   await expect(guide.locator('svg')).toBeVisible();
+  await expect(guide.locator('summary')).toHaveCount(0);
   await expect(guide.getByRole('button', { name: 'Hareketi oynat' })).toBeVisible();
   await context.setOffline(false);
+});
+
+test('workout follows program order one movement at a time with an always visible preview', async ({
+  page,
+}) => {
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await open(page, 'programlar');
+  await page.getByRole('button', { name: 'Başla', exact: true }).first().click();
+  const card = page.locator('.workout-exercise');
+  await expect(card).toHaveCount(1);
+  await expect(card.getByRole('heading', { name: 'Bodyweight Squat', exact: true })).toBeVisible();
+  await expect(page.locator('.workout-steps button')).toHaveCount(6);
+  await expect(card.locator('.workout-guide svg')).toBeVisible();
+  await expect(page.getByRole('button', { name: /Önceki hareket/ })).toBeDisabled();
+  await page.getByRole('button', { name: /Sonraki hareket/ }).click();
+  await expect(card.getByRole('heading', { name: 'Wall Push-Up', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: /Önceki hareket/ }).click();
+  await page.getByRole('button', { name: '1. set tamamla', exact: true }).click();
+  await expect(page.getByText('1 / 12 set tamamlandı')).toBeVisible();
+  await page.getByRole('button', { name: '2. set tamamla', exact: true }).click();
+  await expect(card.getByRole('heading', { name: 'Wall Push-Up', exact: true })).toBeVisible();
+  await expect(page.getByText('2 / 12 set tamamlandı')).toBeVisible();
+  await page.reload();
+  await expect(card.getByRole('heading', { name: 'Wall Push-Up', exact: true })).toBeVisible();
+  const results = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
+    .analyze();
+  expect(results.violations.map((v) => v.id)).toEqual([]);
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
+    .toBe(true);
+  await page.screenshot({
+    path: test.info().outputPath('sequential-workout-phone.png'),
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await expect(card.locator('.workout-guide svg')).toBeVisible();
+  await page.screenshot({
+    path: test.info().outputPath('sequential-workout-desktop.png'),
+    fullPage: true,
+  });
+  await page.locator('.workout-steps button').first().click();
+  await expect(card.getByRole('heading', { name: 'Bodyweight Squat', exact: true })).toBeVisible();
+  await expect(card.getByRole('button', { name: '1. set geri al', exact: true })).toBeVisible();
+  await page.locator('.workout-steps button').nth(1).click();
+  await card.getByRole('button', { name: 'Atla', exact: true }).click();
+  await expect(card.getByRole('heading', { name: 'Glute Bridge', exact: true })).toBeVisible();
+  await page.reload();
+  await expect(card.getByRole('heading', { name: 'Glute Bridge', exact: true })).toBeVisible();
+  await page.locator('.workout-steps button').nth(1).click();
+  await card.getByRole('button', { name: 'Geri ekle', exact: true }).click();
+  await expect(card.getByRole('button', { name: '1. set tamamla', exact: true })).toBeVisible();
 });
