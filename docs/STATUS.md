@@ -1,6 +1,14 @@
 ﻿# Uygulama durumu — 16 Kasım 2026
 
-## Son geliştirme — egzersiz medyası
+## Son geliştirme — hazır hareket önizlemeleri (17 Kasım 2026)
+
+Kullanıcının medya yüklemesi gerekmemesi için başlangıçtaki 12 egzersize özgün SVG şemaları eklendi. Egzersiz kartları başlangıç/hareket pozisyonlarını hazır gösterir; detayda iki pozisyon oynatılıp durdurulabilir. Antrenman ekranında açılabilir hareket rehberi vardır. Yüzüstü hareketler üstten görünüm olarak etiketlenir. Gösterimler şematiktir; gerçek video veya fotoğraf olarak sunulmaz.
+
+Önizlemeler uygulama koduyla paketlenip PWA cache'ine alınır; harici medya adresi, hesap veya yükleme gerekmez. Kimlik/ad eşlemesi mevcut ilk egzersiz kayıtlarını da kapsar. IndexedDB şeması/tohumları değiştirilmedi; silinen kayıtlar tekrar eklenmez, mevcut kullanıcı medyası korunur. Özel egzersizlere yanlış bir hazır hareket atanmaz. Oynatma yalnızca açık kullanıcı eylemiyle başlar ve kapanışta timer temizlenir.
+
+Yerel testlerde **24 test ve 6 Chromium senaryosu** geçti. Yeni testler 12 hareketin kapsanmasını, bilinmeyen kimliğin reddini, oynat/durdur kontrolünü, offline hazır önizlemeleri ve antrenman içindeki rehberi doğrular. Mobil ekran görüntüsü görsel olarak incelendi. Fiziksel iPhone testi yapılmadı.
+
+## Önceki geliştirme — isteğe bağlı egzersiz medyası
 
 Hazır ve özel egzersizlerde detay → **Resim / video düzenle** ile HTTPS resim/video bağlantıları eklenebilir veya kaldırılabilir. Resimler detayda gösterilir; doğrudan MP4/WebM/MOV dosyaları controls/playsinline ve preload=none ile oynatılır; diğer video sayfaları yeni sekmede açılır. Yükleme hataları için açıklama ve kaynak bağlantısı vardır. Harici medya offline cache'e alınmaz ve dosyaları yedeğe kopyalanmaz; yalnızca URL'ler mevcut JSON yedeğinde saklanır.
 

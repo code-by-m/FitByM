@@ -22,6 +22,7 @@ Yerel adres: http://localhost:5173/FitByM/ . Üretim çıktısı `dist/` içinde
 - Gerçek kayıtlardan hesaplanan ana sayfa, haftalık hedefler ve A/B önerisi.
 - İlk kurulumda 12 egzersiz, düzenlenebilir FULL BODY A/B ve kişisel tercihler. Sahte seans veya vücut ölçümü oluşturulmaz.
 - Egzersiz arama/filtreleme, Türkçe yönergeler, özel egzersiz oluşturma/düzenleme/silme.
+- Başlangıçtaki 12 hareket için **hazır çizimli önizlemeler**: kart ve detayda iki pozisyon, detayda oynat/durdur, antrenman içinde açılabilir rehber. Kullanıcı bağlantısı veya dosya yükleme gerekmez; uygulamayla birlikte çevrimdışı çalışır. Bunlar özgün şemalardır, gerçek video kaydı değildir. Mevcut veritabanlarında da otomatik görünür.
 - Hazır/özel egzersiz detayında **Resim / video düzenle** ile HTTPS medya bağlantıları ekleme/kaldırma. Resimler detayda, doğrudan MP4/WebM/MOV videolar inline oynatıcıda; video sayfaları yeni sekmede açılır. Medya dosyaları offline önbelleğe alınmaz; bağlantılar JSON yedeğine dahildir.
 - Program oluşturma, güncelleme, sıralama, set/tekrar/süre/dinlenme/not, kopyalama ve silme.
 - Aktif seansı sürdürme, set kaydı, ek set, egzersiz atlama, dinlenme sayacı, bitirme/iptal ve geçmiş ayrıntıları.

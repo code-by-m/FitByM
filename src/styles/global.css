@@ -1114,6 +1114,41 @@ legend {
 .exercise-media figcaption {
   font-size: 12px;
 }
+.movement-preview {
+  margin: 0 0 18px;
+  background: var(--bg);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.movement-preview svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.movement-preview-detail {
+  padding: 12px;
+}
+.movement-preview figcaption {
+  padding: 4px 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.movement-preview figcaption .row {
+  flex-wrap: wrap;
+}
+.movement-preview figcaption p {
+  margin-bottom: 0;
+}
+.workout-guide {
+  margin: 0 0 16px;
+}
+.workout-guide summary {
+  min-height: 44px;
+  padding: 12px 0;
+  cursor: pointer;
+  color: var(--primary);
+  font-size: 13px;
+}
 
 /* Keep user-created names and grid inputs inside narrow phone layouts. */
 input,

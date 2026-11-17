@@ -9,6 +9,7 @@ import { exerciseSchema, uid, now, type Exercise } from '../types/models';
 import { Modal, Empty } from '../components/Modal';
 import { useAction } from '../components/Notices';
 import { ExerciseMedia } from '../components/ExerciseMedia';
+import { ExercisePreview } from '../components/ExercisePreview';
 import { exerciseMediaSchema } from '../lib/media';
 function MediaEditor({
   exercise,
@@ -229,6 +230,7 @@ export default function Exercises() {
       <div className="exercise-grid">
         {filtered.map((e) => (
           <button className="card exercise-card" key={e.id} onClick={() => setDetail(e)}>
+            {!e.isCustom && <ExercisePreview exerciseId={e.id} name={e.name} />}
             <span className="badge">{e.primaryMuscleGroup}</span>
             <h2>{e.name}</h2>
             <p>
@@ -252,6 +254,9 @@ export default function Exercises() {
       )}
       {detail && (
         <Modal title={detail.name} onClose={() => setDetail(undefined)}>
+          {!detail.isCustom && (
+            <ExercisePreview exerciseId={detail.id} name={detail.name} controls />
+          )}
           <ExerciseMedia
             key={`${detail.id}-${detail.imageUrl}-${detail.videoUrl}`}
             name={detail.name}

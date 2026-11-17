@@ -8,6 +8,8 @@ import { now, type WorkoutSet, type SessionExercise } from '../types/models';
 import { useClock } from '../hooks/useClock';
 import { useAction } from '../components/Notices';
 import { Empty } from '../components/Modal';
+import { ExercisePreview } from '../components/ExercisePreview';
+import { getExercisePreview } from '../lib/exercise-previews';
 export function clock(seconds: number) {
   const s = Math.max(0, Math.floor(seconds));
   return `${Math.floor(s / 60)
@@ -185,6 +187,16 @@ export default function Workout() {
           </div>
           {!ex.skipped && (
             <>
+              {getExercisePreview(ex.exerciseId, ex.exerciseNameSnapshot) && (
+                <details className="workout-guide">
+                  <summary>Hareket önizlemesi</summary>
+                  <ExercisePreview
+                    exerciseId={ex.exerciseId}
+                    name={ex.exerciseNameSnapshot}
+                    controls
+                  />
+                </details>
+              )}
               {sets
                 .filter((s) => s.workoutSessionExerciseId === ex.id)
                 .sort((a, b) => a.setNumber - b.setNumber)

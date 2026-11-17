@@ -239,3 +239,39 @@ test('exercise media editor saves links and retains them after reload', async ({
   );
   await expect(page.locator('iframe,video')).toHaveCount(0);
 });
+
+test('all built-in exercises have ready previews, including offline and during a workout', async ({
+  page,
+  context,
+}) => {
+  await open(page, 'egzersizler');
+  await expect(page.locator('.exercise-card .movement-preview svg')).toHaveCount(12);
+  await controlled(page);
+  await context.setOffline(true);
+  await page.reload();
+  await expect(page.locator('.exercise-card .movement-preview svg')).toHaveCount(12);
+  await page.getByRole('button', { name: /Bodyweight Squat/ }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog.locator('.movement-preview svg')).toBeVisible();
+  await expect(dialog.locator('.movement-preview circle')).toHaveCount(2);
+  await dialog.getByRole('button', { name: 'Hareketi oynat' }).click();
+  await expect(dialog.locator('.movement-preview circle')).toHaveCount(1);
+  const first = await dialog.locator('.movement-preview polyline').first().getAttribute('points');
+  await expect
+    .poll(() => dialog.locator('.movement-preview polyline').first().getAttribute('points'))
+    .not.toBe(first);
+  await dialog.getByRole('button', { name: 'Durdur' }).click();
+  await expect(dialog.locator('.movement-preview circle')).toHaveCount(2);
+  await page.screenshot({
+    path: test.info().outputPath('ready-preview-phone.png'),
+    fullPage: true,
+  });
+  await dialog.getByRole('button', { name: 'Kapat', exact: true }).click();
+  await open(page, 'programlar');
+  await page.getByRole('button', { name: 'Başla', exact: true }).first().click();
+  const guide = page.locator('.workout-guide').first();
+  await guide.locator('summary').click();
+  await expect(guide.locator('svg')).toBeVisible();
+  await expect(guide.getByRole('button', { name: 'Hareketi oynat' })).toBeVisible();
+  await context.setOffline(false);
+});
