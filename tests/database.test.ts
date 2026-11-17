@@ -143,7 +143,7 @@ describe('Veritabanı ve kayıt bütünlüğü', () => {
     await importBackup(backup, db);
     expect(await db.workoutPlans.count()).toBe(2);
     expect(await db.workoutSets.count()).toBe(12);
-    expect(backup.schemaVersion).toBe(1);
+    expect(backup.schemaVersion).toBe(2);
   });
   it('uyumsuz sürüm ve bozuk ilişkileri mevcut kayıtlara dokunmadan reddeder', async () => {
     const backup = await exportBackup(db);

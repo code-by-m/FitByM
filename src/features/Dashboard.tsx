@@ -4,6 +4,7 @@ import { ArrowRight, Play, Plus, TrendingDown, Target, CalendarDays, Flame } fro
 import { db } from '../database/db';
 import { repository } from '../database/repository';
 import { useAction } from '../components/Notices';
+import NutritionOverview from './nutrition/NutritionOverview';
 export function weekStart() {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
@@ -173,6 +174,7 @@ export default function Dashboard() {
           </p>
         </section>
       </div>
+      <NutritionOverview />
       <section className="card">
         <div className="section-title">
           <h2>Son antrenmanların</h2>

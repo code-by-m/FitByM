@@ -117,5 +117,27 @@ export type WorkoutSet = z.infer<typeof setSchema>;
 export type Measurement = z.infer<typeof measurementSchema>;
 export type Goals = z.infer<typeof goalsSchema>;
 export type Profile = z.infer<typeof profileSchema>;
+export const nutritionEntrySchema = z.object({
+  id,
+  recordedDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .refine((value) => {
+      const time = Date.parse(`${value}T12:00:00Z`);
+      return Number.isFinite(time) && new Date(time).toISOString().slice(0, 10) === value;
+    }, 'Geçerli bir tarih girin.'),
+  meal: z.enum(['Kahvaltı', 'Öğle', 'Akşam', 'Ara öğün']),
+  foodName: z.string().trim().min(1).max(120),
+  portionDescription: z.string().trim().max(120),
+  servings: positive.min(0.01).max(100),
+  caloriesPerServing: z.number().finite().min(0).max(20000),
+  proteinGrams: z.number().finite().min(0).max(2000).optional(),
+  carbohydrateGrams: z.number().finite().min(0).max(5000).optional(),
+  fatGrams: z.number().finite().min(0).max(2000).optional(),
+  notes: text,
+  createdAt: date,
+  updatedAt: date,
+});
+export type NutritionEntry = z.infer<typeof nutritionEntrySchema>;
 export const uid = () => crypto.randomUUID();
 export const now = () => new Date().toISOString();

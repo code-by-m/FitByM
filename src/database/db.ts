@@ -9,6 +9,7 @@ import type {
   Measurement,
   Goals,
   Profile,
+  NutritionEntry,
 } from '../types/models';
 import { seed } from './seed';
 export class FitDatabase extends Dexie {
@@ -21,6 +22,7 @@ export class FitDatabase extends Dexie {
   bodyMeasurements!: Table<Measurement, string>;
   userGoals!: Table<Goals, string>;
   profiles!: Table<Profile, string>;
+  nutritionEntries!: Table<NutritionEntry, string>;
   constructor(name = 'FitByM') {
     super(name);
     this.version(1).stores({
@@ -34,6 +36,8 @@ export class FitDatabase extends Dexie {
       userGoals: 'id',
       profiles: 'id',
     });
+    // Add an empty food log; all v1 stores and existing records remain untouched.
+    this.version(2).stores({ nutritionEntries: 'id,recordedDate,meal,createdAt' });
     this.on('populate', () => seed(this));
   }
 }

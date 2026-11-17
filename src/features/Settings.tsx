@@ -115,6 +115,7 @@ export default function Settings() {
   const goals = useLiveQuery(() => db.userGoals.get('default'));
   const profile = useLiveQuery(() => db.profiles.get('default'));
   const [backup, setBackup] = useState<Backup>();
+  const [legacyBackup, setLegacyBackup] = useState(false);
   const act = useAction();
   const notice = useNotice();
   return (
@@ -163,7 +164,10 @@ export default function Settings() {
                   return;
                 }
                 void act(async () => {
-                  setBackup(backupSchema.parse(JSON.parse(await file.text())));
+                  const raw = JSON.parse(await file.text());
+                  const validated = backupSchema.parse(raw);
+                  setLegacyBackup(raw.schemaVersion === 1);
+                  setBackup(validated);
                 });
               }}
             />
@@ -252,8 +256,8 @@ export default function Settings() {
       <section className="card">
         <h2>Verileri sıfırla</h2>
         <p>
-          Egzersizler, programlar, antrenmanlar ve ölçümler silinir. Profil ve hedeflerin korunur.
-          İlk programlar otomatik yeniden oluşturulmaz.
+          Egzersizler, programlar, antrenmanlar, ölçümler ve yemek kayıtları silinir. Profil ve
+          hedeflerin korunur. İlk programlar otomatik yeniden oluşturulmaz.
         </p>
         <button
           className="danger"
@@ -274,12 +278,18 @@ export default function Settings() {
           <p>Yedek tarihi: {new Date(backup.exportedAt).toLocaleString('tr-TR')}</p>
           <p>
             {backup.exercises.length} egzersiz · {backup.workoutPlans.length} program ·{' '}
-            {backup.workoutSessions.length} antrenman · {backup.bodyMeasurements.length} ölçüm
+            {backup.workoutSessions.length} antrenman · {backup.bodyMeasurements.length} ölçüm ·{' '}
+            {backup.nutritionEntries.length} yemek kaydı
           </p>
           <p className="error">
             Bu işlem mevcut tüm verileri yedekteki verilerle değiştirecek. Önce güncel verilerini
             dışa aktar.
           </p>
+          {legacyBackup && (
+            <p className="error">
+              Bu eski yedek yemek kaydı içermez. Geri yükleme mevcut yemek kayıtlarını da siler.
+            </p>
+          )}
           <button
             className="danger"
             onClick={() =>

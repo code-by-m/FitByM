@@ -19,7 +19,7 @@ Güncel Safari önerilir; Tailwind 4 için Safari 16.4 ve üzeri hedeflenir. Saf
 - [ ] Safari → Paylaş → Ana Ekrana Ekle: FitByM adı ve bozulmamış CodeByM simgesi görünüyor.
 - [ ] Ana ekrandan açılış standalone; gezinme ve geri dönüş çalışıyor.
 - [ ] Küçük ekran, çentikli ekran, dikey/yatay yönler: üst başlık, güvenli alan ve alt gezinme kesilmiyor.
-- [ ] Tüm 7 ekran: Ana Sayfa, Egzersizler, Programlar, Antrenman, Geçmiş, Gelişim, Ayarlar açılıyor.
+- [ ] Tüm 8 ekran: Ana Sayfa, Egzersizler, Programlar, Antrenman, Geçmiş, Gelişim, Beslenme, Ayarlar açılıyor.
 - [ ] Uzun egzersiz/program adları taşıp yatay kaydırma oluşturmuyor.
 - [ ] Açık/koyu/sistem temalarında yazılar, grafikler ve düğmeler okunuyor; resmî simge özgün renklerini koruyor.
 - [ ] Klavye açıldığında form alanına erişilebiliyor; sayısal alanlar otomatik sayfa yakınlaştırması oluşturmuyor.
@@ -42,6 +42,12 @@ Güncel Safari önerilir; Tailwind 4 için Safari 16.4 ve üzeri hedeflenir. Saf
 - [ ] Program/ölçüm silmede İptal seçeneği veriyi koruyor.
 
 ## Yedek ve geri yükleme
+
+- [ ] Güncellemeden sonra eski antrenmanlar/ölçümler/hedefler korunuyor; Beslenme boş kayıtlarla açılıyor.
+- [ ] Yemek ekle: 2 porsiyon × 200 kcal = 400 kcal; isteğe bağlı makrolar doğru hesaplanıyor.
+- [ ] Yemek düzenleme/kopyalama/silme, tarih değiştirme, gece yarısında Bugün ve ana sayfa özeti doğru.
+- [ ] Uçak modunda yemek kaydet, yenile; kayıt ve toplam korunuyor.
+- [ ] v2 JSON yedeği yemekleri içeriyor; eski v1 yedeği seçilince yemek kaydı bulunmadığı/silineceği açıkça belirtiliyor. Önizlemeyi iptal etmek kayıtları değiştirmiyor.
 
 - [ ] Ayarlar → JSON yedek indir → Dosyalar'a kaydet; dosya okunabiliyor.
 - [ ] Ölçüm ve geçmiş CSV indirme çalışıyor; Türkçe karakterler doğru.

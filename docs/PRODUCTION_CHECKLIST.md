@@ -18,18 +18,18 @@ Bu belge yerel otomasyon ile canlı/fiziksel cihaz doğrulamasını ayırır. Ca
 
 ## Veri koruma
 
-- [x] IndexedDB adı ve v1 şeması aynı; migration/schema değişikliği yapılmadı.
+- [x] IndexedDB adı ve yayımlanmış v1 şeması aynı; v2 yalnızca boş yemek tablosu ekler. Eski verilerin ve silinmiş program durumunun korunması migration testiyle doğrulandı.
 - [x] Tohumlar sadece populate sırasında; her açılışta clear/delete/reset yok.
 - [x] Yalnızca açık kullanıcı sıfırlaması veya onaylı yedek geri yüklemesi tabloları temizleyebilir.
 - [x] Oturum snapshot'ları ve geçmiş kayıtları korunur.
 - [x] Ek set numarası transaction içinde hesaplanır; bitmiş seans tekrar değiştirilemez.
-- [x] Yedek şema/sürüm/ilişki kontrolü, önizleme ve açık onay.
+- [x] v2 yedek şema/sürüm/ilişki kontrolü, v1 uyumluluğu, yemek kayıt sayısı/legacy uyarısı, önizleme ve açık onay; yazma hatasında tüm tablolarda rollback testi.
 - [x] Testler izole/sentetik veritabanı ve tarayıcı bağlamı kullanır; gerçek kullanıcı IndexedDB'sine erişmez.
 - [ ] Fiziksel iPhone'da kalıcılık, düşük depolama ve uygulama geçişleri kabulü.
 
 ## UI ve erişilebilirlik
 
-- [x] 7 ekran için 320/390/1440px ve açık/koyu tema Chromium taraması tanımlandı.
+- [x] 8 ekran için 320/390/1440px ve açık/koyu tema Chromium taraması tanımlandı (Beslenme dahil).
 - [x] Yatay taşma ve axe WCAG A/AA kontrolleri otomatik sınanır.
 - [x] HashRouter ile uyumlu İçeriğe geç; native dialog ve görünür odak.
 - [x] Aktif antrenmanda PWA güncellemesi ertelenir; açık formları kaydetme uyarısı.

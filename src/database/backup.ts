@@ -10,10 +10,11 @@ import {
   measurementSchema,
   goalsSchema,
   profileSchema,
+  nutritionEntrySchema,
 } from '../types/models';
 export const backupSchema = z
   .object({
-    schemaVersion: z.literal(1),
+    schemaVersion: z.union([z.literal(1), z.literal(2)]),
     exportedAt: z.string().datetime(),
     exercises: z.array(exerciseSchema),
     workoutPlans: z.array(planSchema),
@@ -24,7 +25,17 @@ export const backupSchema = z
     bodyMeasurements: z.array(measurementSchema),
     userGoals: z.array(goalsSchema),
     profiles: z.array(profileSchema),
+    nutritionEntries: z.array(nutritionEntrySchema).optional(),
   })
+  .superRefine((value, ctx) => {
+    if (value.schemaVersion === 2 && !value.nutritionEntries)
+      ctx.addIssue({ code: 'custom', message: 'Yemek kayıtları eksik: sürüm 2 yedeği geçersiz.' });
+  })
+  .transform((value) => ({
+    ...value,
+    schemaVersion: 2 as const,
+    nutritionEntries: value.schemaVersion === 1 ? [] : value.nutritionEntries!,
+  }))
   .superRefine((v, ctx) => {
     const fail = (message: string) => ctx.addIssue({ code: 'custom', message });
     for (const [key, rows] of Object.entries(v)) {
@@ -57,7 +68,7 @@ export type Backup = z.infer<typeof backupSchema>;
 export async function exportBackup(database: FitDatabase = db): Promise<Backup> {
   return database.transaction('r', database.tables, async () =>
     backupSchema.parse({
-      schemaVersion: 1,
+      schemaVersion: 2,
       exportedAt: new Date().toISOString(),
       ...Object.fromEntries(
         await Promise.all(database.tables.map(async (t) => [t.name, await t.toArray()])),

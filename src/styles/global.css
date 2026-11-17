@@ -1017,7 +1017,8 @@ legend {
     justify-content: center;
     gap: 5px;
     min-height: 48px;
-    min-width: 56px;
+    min-width: 0;
+    flex: 1;
     text-decoration: none;
     font-size: 9px;
     color: var(--muted);
@@ -1222,6 +1223,162 @@ legend {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
+}
+.nutrition-date-nav {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.nutrition-date-nav label {
+  margin: 0;
+  min-width: 150px;
+}
+.nutrition-date-nav > button {
+  flex-shrink: 0;
+}
+.nutrition-kcal {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.nutrition-kcal > strong,
+.nutrition-overview > .row > strong {
+  font-size: 30px;
+  letter-spacing: -0.7px;
+}
+.nutrition-kcal small,
+.nutrition-overview small {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+.nutrition-kcal > span,
+.nutrition-overview > .row > span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.nutrition-progress {
+  width: 100%;
+  height: 12px;
+  display: block;
+  margin: 22px 0 16px;
+  border: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  accent-color: var(--primary);
+  background: var(--bg);
+}
+.nutrition-progress::-webkit-progress-bar {
+  background: var(--bg);
+  border-radius: 12px;
+}
+.nutrition-progress::-webkit-progress-value {
+  background: var(--primary);
+  border-radius: 12px;
+}
+.nutrition-progress::-moz-progress-bar {
+  background: var(--primary);
+  border-radius: 12px;
+}
+.nutrition-remaining {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 14px;
+}
+.nutrition-macros {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.nutrition-macros > div {
+  min-width: 0;
+}
+.nutrition-macros span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  margin-bottom: 10px;
+}
+.nutrition-macros strong {
+  font-size: 22px;
+}
+.nutrition-macros small {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.nutrition-overview > .row {
+  flex-wrap: wrap;
+}
+.nutrition-overview > p {
+  margin-bottom: 0;
+  font-size: 13px;
+}
+.nutrition-meals {
+  align-items: start;
+}
+.nutrition-entry {
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+}
+.nutrition-entry:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+.nutrition-entry:last-child {
+  padding-bottom: 0;
+}
+.nutrition-entry h3 {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.nutrition-entry .row > strong {
+  font-size: 14px;
+  flex-shrink: 0;
+  color: var(--primary);
+}
+.nutrition-entry > p {
+  font-size: 12px;
+  margin: 8px 0 14px;
+}
+.nutrition-entry .actions > button {
+  font-size: 12px;
+}
+.nutrition-empty {
+  padding: 12px;
+  font-size: 13px;
+}
+@media (max-width: 480px) {
+  .nutrition-macros {
+    gap: 8px;
+  }
+  .nutrition-macros strong {
+    font-size: 18px;
+    display: block;
+  }
+  .nutrition-macros small {
+    display: block;
+    margin-top: 5px;
+  }
+  .nutrition-kcal strong {
+    font-size: 26px;
+  }
+  .nutrition-date-nav label {
+    flex: 1;
+    min-width: 120px;
+  }
+  .nutrition-entry .row {
+    align-items: start;
+    flex-wrap: wrap;
+  }
 }
 @media (max-width: 1000px) {
   .workout-exercise-body.has-preview {

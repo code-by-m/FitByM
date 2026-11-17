@@ -9,6 +9,7 @@ import {
   BookOpen,
   History,
   ArrowUpRight,
+  Utensils,
 } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useRegisterSW } from 'virtual:pwa-register/react';
@@ -21,10 +22,12 @@ const Workout = lazy(() => import('./features/Workout'));
 const Progress = lazy(() => import('./features/Progress'));
 const SettingsPage = lazy(() => import('./features/Settings'));
 const HistoryPage = lazy(() => import('./features/History'));
+const Nutrition = lazy(() => import('./features/nutrition/Nutrition'));
 const navigation = [
   ['/', 'Ana Sayfa', House],
   ['/programlar', 'Programlar', Dumbbell],
   ['/antrenman', 'Antrenman', Activity],
+  ['/beslenme', 'Beslenme', Utensils],
   ['/gelisim', 'Gelişim', ChartNoAxesCombined],
   ['/ayarlar', 'Ayarlar', Settings],
 ] as const;
@@ -212,6 +215,7 @@ export default function App() {
                 <Route path="/gelisim" element={<Progress />} />
                 <Route path="/ayarlar" element={<SettingsPage />} />
                 <Route path="/gecmis" element={<HistoryPage />} />
+                <Route path="/beslenme" element={<Nutrition />} />
                 <Route
                   path="*"
                   element={

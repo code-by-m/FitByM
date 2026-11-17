@@ -71,7 +71,7 @@ test('custom exercise → program → multiple sets → reload/resume → histor
   await expect(page.getByText('88.5 kg ·', { exact: false })).toBeVisible();
   await open(page, 'ayarlar');
   const data = await backup(page);
-  expect(data.schemaVersion).toBe(1);
+  expect(data.schemaVersion).toBe(2);
   expect(
     data.workoutSessions.filter((s: { status: string }) => s.status === 'Completed'),
   ).toHaveLength(1);
@@ -104,6 +104,7 @@ test('custom exercise → program → multiple sets → reload/resume → histor
     'bodyMeasurements',
     'userGoals',
     'profiles',
+    'nutritionEntries',
   ])
     expect(restored[key]).toEqual(data[key]);
   expect(errors).toEqual([]);
@@ -113,7 +114,16 @@ test('all pages: narrow phone and desktop, light/dark, accessibility and hash re
   page,
 }) => {
   test.setTimeout(120000);
-  const routes = ['', 'egzersizler', 'programlar', 'antrenman', 'gecmis', 'gelisim', 'ayarlar'];
+  const routes = [
+    '',
+    'egzersizler',
+    'programlar',
+    'antrenman',
+    'gecmis',
+    'gelisim',
+    'ayarlar',
+    'beslenme',
+  ];
   for (const theme of ['light', 'dark'] as const) {
     await page.emulateMedia({ colorScheme: theme });
     for (const width of [320, 390, 1440]) {
@@ -137,11 +147,11 @@ test('all pages: narrow phone and desktop, light/dark, accessibility and hash re
     }
   }
   await page.reload();
-  await expect(page.getByRole('heading', { name: 'Ayarlar', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Beslenme', exact: true })).toBeVisible();
   await page.locator('.skip').focus();
   await page.keyboard.press('Enter');
   await expect(page.locator('main')).toBeFocused();
-  expect(page.url()).toContain('#/ayarlar');
+  expect(page.url()).toContain('#/beslenme');
 });
 
 test('service worker scope, cached lazy routes, offline reload, offline data and backup', async ({
@@ -326,4 +336,95 @@ test('workout follows program order one movement at a time with an always visibl
   await page.locator('.workout-steps button').nth(1).click();
   await card.getByRole('button', { name: 'Geri ekle', exact: true }).click();
   await expect(card.getByRole('button', { name: '1. set tamamla', exact: true })).toBeVisible();
+});
+
+test('nutrition tracks local days, portions, CRUD, backups and offline meals', async ({
+  page,
+  context,
+}) => {
+  await page.clock.install({ time: new Date('2026-11-16T21:30:00Z') });
+  await open(page, 'beslenme');
+  await expect(page.getByLabel('Gün', { exact: true })).toHaveValue('2026-11-17');
+  await expect(page.getByText('Bu gün için henüz yemek kaydı yok.')).toBeVisible();
+  await page.getByRole('button', { name: 'Yemek ekle', exact: true }).click();
+  await page.getByLabel('Yemek adı', { exact: true }).fill('Test Öğünü');
+  await page.getByRole('combobox', { name: 'Öğün', exact: true }).selectOption({ label: 'Öğle' });
+  await page.getByLabel('Porsiyon açıklaması').fill('1 test porsiyonu');
+  await page.getByLabel('Porsiyon adedi').fill('2');
+  await page.getByLabel('Kalori (kcal)', { exact: true }).fill('200');
+  await page.getByLabel('Protein (g)', { exact: true }).fill('10');
+  await page.getByLabel('Karbonhidrat (g)', { exact: true }).fill('20');
+  await page.getByLabel('Yağ (g)', { exact: true }).fill('5');
+  await page.getByRole('button', { name: 'Yemeği kaydet', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.locator('.nutrition-kcal > strong')).toContainText('400');
+  await expect(page.locator('.nutrition-remaining')).toContainText('1.900');
+  await page.getByRole('button', { name: 'Test Öğünü düzenle', exact: true }).click();
+  await page.getByLabel('Porsiyon adedi').fill('3');
+  await page.getByRole('button', { name: 'Yemeği kaydet', exact: true }).click();
+  await expect(page.locator('.nutrition-kcal > strong')).toContainText('600');
+  await page.reload();
+  await expect(page.locator('.nutrition-kcal > strong')).toContainText('600');
+  await page.getByRole('button', { name: 'Test Öğünü kopyala', exact: true }).click();
+  await page.getByRole('button', { name: 'Yemeği kaydet', exact: true }).click();
+  await expect(page.locator('.nutrition-entry')).toHaveCount(2);
+  await expect(page.locator('.nutrition-kcal > strong')).toContainText('1.200');
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.getByRole('button', { name: 'Test Öğünü sil', exact: true }).first().click();
+  await expect(page.locator('.nutrition-entry')).toHaveCount(1);
+  await page.getByRole('button', { name: 'Sonraki gün', exact: true }).click();
+  await expect(page.getByLabel('Gün', { exact: true })).toHaveValue('2026-11-18');
+  await expect(page.locator('.nutrition-kcal > strong')).toContainText('0');
+  await page.getByRole('button', { name: 'Önceki gün', exact: true }).click();
+  await expect(page.locator('.nutrition-kcal > strong')).toContainText('600');
+  await open(page);
+  await expect(page.locator('.nutrition-overview')).toContainText('600');
+  await open(page, 'ayarlar');
+  const data = await backup(page);
+  expect(data.schemaVersion).toBe(2);
+  expect(data.nutritionEntries).toHaveLength(1);
+  const legacy = { ...data, schemaVersion: 1 };
+  delete legacy.nutritionEntries;
+  await page.getByLabel('Yedek seç').setInputFiles({
+    name: 'legacy-v1.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(legacy)),
+  });
+  await expect(page.getByRole('dialog')).toContainText('Bu eski yedek yemek kaydı içermez');
+  await page.getByRole('button', { name: 'Kapat', exact: true }).click();
+  expect((await backup(page)).nutritionEntries).toHaveLength(1);
+  await page.getByLabel('Yedek seç').setInputFiles({
+    name: 'nutrition-v2.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(data)),
+  });
+  await expect(page.getByRole('dialog')).toContainText('1 yemek kaydı');
+  await page.getByRole('button', { name: 'Onaylıyorum, verileri değiştir', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  expect((await backup(page)).nutritionEntries).toEqual(data.nutritionEntries);
+  await controlled(page);
+  await context.setOffline(true);
+  await open(page, 'beslenme');
+  await expect(page.locator('.nutrition-kcal > strong')).toContainText('600');
+  await page.getByRole('button', { name: 'Yemek ekle', exact: true }).click();
+  await page.getByLabel('Yemek adı', { exact: true }).fill('Çevrimdışı kayıt');
+  await page.getByLabel('Kalori (kcal)', { exact: true }).fill('100');
+  await page.getByRole('button', { name: 'Yemeği kaydet', exact: true }).click();
+  await expect(page.locator('.nutrition-kcal > strong')).toContainText('700');
+  await expect(
+    page.getByText('1 kayıtta makro bilgisi eksik; toplamlar yalnızca girilen değerleri içerir.'),
+  ).toBeVisible();
+  await page.reload();
+  await expect(page.locator('.nutrition-kcal > strong')).toContainText('700');
+  const accessibility = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
+    .analyze();
+  expect(accessibility.violations.map((v) => v.id)).toEqual([]);
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
+    .toBe(true);
+  await page.screenshot({ path: test.info().outputPath('nutrition-phone.png'), fullPage: true });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({ path: test.info().outputPath('nutrition-desktop.png'), fullPage: true });
+  await context.setOffline(false);
 });

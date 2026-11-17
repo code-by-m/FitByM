@@ -1,6 +1,16 @@
 ﻿# Uygulama durumu — 16 Kasım 2026
 
-## Son geliştirme — sıralı antrenman ekranı (17 Kasım 2026)
+## Son geliştirme — kalori ve beslenme takibi (17 Kasım 2026)
+
+Beslenme ekranı ve mobil/masaüstü gezinme bağlantısı eklendi. Kullanıcı tarih/öğün, yemek adı, porsiyon açıklaması/adedi, bir porsiyonun kalorisi ve isteğe bağlı protein/karbonhidrat/yağ bilgisi girer. Kaloriler ve girilmiş makrolar porsiyonla çarpılır; günlük toplam, güncel hedef ve kalan/aşılan miktar gösterilir. Bilinmeyen makrolar eksik olarak belirtilir. Kayıt düzenleme/kopyalama/onaylı silme ve önceki/sonraki gün gezintisi vardır. Ana sayfa bugünkü kalori özetini gösterir; gece yarısı veya uygulamaya dönüşte gün yenilenir.
+
+IndexedDB'nin yayımlanmış v1 tanımı değişmedi; v2 yalnızca boş `nutritionEntries` tablosunu ekler. Migration testi eski egzersiz/program/seans/set/ölçüm/profil/hedef verilerinin birebir korunmasını ve silinen tohumların geri gelmemesini doğruladı. Yeni yemekler seed edilmez. Besin değeri tahmini, gıda API'si, backend veya yeni dependency eklenmedi.
+
+Yeni JSON yedekleri schemaVersion 2 ve yemek dizisini içerir. v1 yedekleri normalize edilerek kabul edilir; yemek içermeyen eski yedeğin mevcut yemek kayıtlarını sileceği, önizlemede açıkça yazılır. Tam restore yalnızca kullanıcı onayıyla tek transaction içindedir. Yeni yemek tablosuna yazma hatası enjekte edilen test, bütün tabloların rollback ile korunduğunu doğruladı. Eksik v2 yemek dizisi, desteklenmeyen sürüm ve geçersiz kayıtlar reddedilir.
+
+Yerel typecheck, ESLint, üretim build/PWA doğrulaması başarılı. **33 test, 8 gerçek Chromium senaryosu geçti.** Beslenme CRUD, porsiyon toplamları, İstanbul'da gece yarısına yakın yerel gün, gün filtresi, dashboard özeti, v1 uyarısı/onaydan önce veri korunması, v2 backup/restore, offline yemek kaydı/reload, eksik makrolar ve axe/taşma denetimi kapsanır. Yeni ekran 320/390/1440px ve açık/koyu temalarda tarandı; mobil/masaüstü görüntüler incelendi. Fiziksel iPhone testi yapılmadı.
+
+## Önceki geliştirme — sıralı antrenman ekranı (17 Kasım 2026)
 
 Antrenman programındaki hareketler üstte numaralı bir sıralama üzerinden seçilir; aynı anda bir hareketin açık önizlemesi ve setleri gösterilir. Önizleme artık açılır bölümün arkasında değildir. Önceki/sonraki düğmeleri ve doğrudan hareket seçimi vardır. Bir hareketin tüm setleri tamamlandığında veya hareket atlandığında sıradaki tamamlanmamış harekete geçilir. Tamamlanan hareketler incelenebilir ve atlanan hareket geri eklenebilir.
 

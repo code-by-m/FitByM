@@ -29,6 +29,7 @@ Yerel adres: http://localhost:5173/FitByM/ . Üretim çıktısı `dist/` içinde
 - Antrenmanda program sırasına göre tek hareket görünümü; üstte sıralı hareket seçimi, her zaman açık önizleme, önceki/sonraki gezinme ve tüm setler tamamlanınca otomatik geçiş. Masaüstünde önizleme/setler yan yana; telefonda önizleme setlerin üstünde.
 - Ağırlık/bel/göğüs/kalça/kol kaydı, grafikler, haftalık tutarlılık ve egzersiz performansı.
 - Düzenlenebilir profil/hedefler, sistem/açık/koyu tema, metrik birimler.
+- **Beslenme / kalori takibi:** tarih ve öğün bazlı yemek kaydı, porsiyonla kalori/makro hesabı, günlük hedefe kalan miktar, düzenleme/kopyalama/silme ve ana sayfada bugünün özeti. Besin değerleri elle girilir; gıda veritabanı veya otomatik tahmin kullanılmaz. Eksik makrolar sıfır kabul edilmez.
 - Sürüm kontrollü JSON yedek, doğrulama, önizleme, açık onay ve transaction ile geri yükleme; CSV dışa aktarma.
 - Mobil alt gezinme, masaüstü kenar çubuğu, iPhone safe-area, PWA manifest ve güncelleme bildirimi.
 
@@ -50,17 +51,24 @@ Bkz. [dağıtım kılavuzu](docs/DEPLOYMENT.md). Vite base ve manifest scope `/F
 
 Önce uygulamayı HTTPS üzerinden Safari'de açın. Paylaş → Ana Ekrana Ekle. İlk başarılı çevrimiçi açılış ve service worker kurulumu sonrasında uygulama kabuğu çevrimdışı açılır. Yeni sürüm bildirimi geldiğinde güncellemeyi seçin. iOS arka planda JavaScript'i durdurabilir; sayaçlar başlangıç/bitiş zamanları üzerinden yeniden hesaplanır. Gerçek iPhone üzerinde yükleme ve çevrimdışı testleri ayrıca yapılmalıdır.
 
+## Beslenme kayıtları ve eski veriler
+
+Beslenme → Yemek ekle: yemek adı, porsiyon açıklaması/adedi ve **bir porsiyonun** kalorisini girin. Protein/karbonhidrat/yağ isteğe bağlıdır; toplamlar porsiyon adediyle çarpılır. Gün seçimi yerel takvim gününe göre yapılır. Eski günleri inceleyebilir, kayıtları düzenleyebilir, kopyalayabilir veya onayla silebilirsiniz. Günlük hedefler Ayarlar'daki mevcut tercihlerinizdir; geçmiş günler de güncel hedefle karşılaştırılır.
+
+IndexedDB v2, mevcut v1 kayıtlarını değiştirmeden boş `nutritionEntries` tablosunu ekler. Antrenman/ölçüm/hedef kayıtları ve silinmiş programlar korunur; yemek kaydı uydurulmaz. Yeni JSON yedekleri **schemaVersion 2** olarak tüm yemek kayıtlarını da içerir. Eski v1 yedekler kabul edilir; tam geri yüklemede yemek tablosunun boşalacağı önizlemede ayrıca açıklanır ve onay beklenir. Yeni v2 yedekleri eski uygulama sürümünde açmaya çalışmayın; önce uygulamayı güncelleyin. Kalori takibi çevrimdışı çalışır, kayıtlar sunucuya yüklenmez.
+
 ## Mimari
 
 - `src/features`: Ekranlar ve özelliklere ait formlar.
-- `src/database/db.ts`: Tipli tablolar ve v1 şeması.
+- `src/database/db.ts`: Tipli tablolar ve veri koruyan v1 → v2 geçişi.
 - `src/database/seed.ts`: Yalnızca ilk oluşturulmada çalışan tohum verileri.
 - `src/database/repository.ts`: Doğrulama, ilişkiler ve transaction kullanan iş kuralları.
 - `src/database/backup.ts`: Zod yedek şeması, ilişki kontrolleri, atomik içe aktarma.
 - `src/types/models.ts`: Şemalar ve ortak tipler.
 - `src/components`: Bildirimler, erişilebilir native dialog.
+- `src/features/nutrition`: Beslenme ekranı, hesaplama/tarih yardımcıları ve yerel kayıt repository'si.
 
-Yeni şema sürümleri Dexie `.version(2).stores(...).upgrade(...)` ile eklenmelidir; mevcut v1'i değiştirerek kullanıcı verisini kırmayın. Geçmiş kayıtları program/egzersiz silinse bile oturum snapshot'larından okunur. TanStack Query kullanılmadı; yerel Dexie live query bu sürüm için yeterli.
+Sonraki şema sürümleri Dexie `.version(3).stores(...).upgrade(...)` gibi yeni sürümlerle eklenmelidir; yayımlanan v1/v2 tanımlarını değiştirerek kullanıcı verisini kırmayın. Geçmiş kayıtları program/egzersiz silinse bile oturum snapshot'larından okunur. TanStack Query kullanılmadı; yerel Dexie live query bu sürüm için yeterli.
 
 ## Marka
 
