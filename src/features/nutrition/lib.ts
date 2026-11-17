@@ -11,7 +11,7 @@ export function shiftDay(day: string, amount: number) {
 }
 const round = (value: number) => Math.round((value + Number.EPSILON) * 100) / 100;
 export const numberText = (value: number) =>
-  value.toLocaleString('tr-TR', { maximumFractionDigits: 1 });
+  value.toLocaleString('tr-TR', { maximumFractionDigits: 4 });
 export function nutritionTotals(entries: NutritionEntry[]) {
   const sum = (key: 'caloriesPerServing' | 'proteinGrams' | 'carbohydrateGrams' | 'fatGrams') =>
     round(entries.reduce((total, entry) => total + (entry[key] ?? 0) * entry.servings, 0));

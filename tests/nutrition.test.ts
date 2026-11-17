@@ -4,7 +4,7 @@ import { FitDatabase } from '../src/database/db';
 import { FitnessRepository } from '../src/database/repository';
 import { backupSchema, exportBackup, importBackup } from '../src/database/backup';
 import { NutritionRepository } from '../src/features/nutrition/repository';
-import { nutritionTotals, localDay, shiftDay } from '../src/features/nutrition/lib';
+import { nutritionTotals, localDay, shiftDay, numberText } from '../src/features/nutrition/lib';
 import { nutritionEntrySchema, uid, now, type NutritionEntry } from '../src/types/models';
 let db: FitDatabase;
 let repo: NutritionRepository;
@@ -50,6 +50,7 @@ it('porsiyon toplamlarını hesaplar ve bilinmeyen makroları ayrı belirtir', (
   expect(totals.fat).toBe(7.5);
   expect(totals.knownProtein).toBe(1);
   expect(totals.missingMacros).toBe(1);
+  expect(numberText(0.25)).toBe('0,25');
 });
 it('yemek ekler, düzenler, tarihe göre ayırır ve yeni bağlantıda korur', async () => {
   const meal = entry();

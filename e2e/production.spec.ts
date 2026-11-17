@@ -408,14 +408,16 @@ test('nutrition tracks local days, portions, CRUD, backups and offline meals', a
   await expect(page.locator('.nutrition-kcal > strong')).toContainText('600');
   await page.getByRole('button', { name: 'Yemek ekle', exact: true }).click();
   await page.getByLabel('Yemek adı', { exact: true }).fill('Çevrimdışı kayıt');
+  await page.getByLabel('Porsiyon adedi').fill('0.25');
   await page.getByLabel('Kalori (kcal)', { exact: true }).fill('100');
   await page.getByRole('button', { name: 'Yemeği kaydet', exact: true }).click();
-  await expect(page.locator('.nutrition-kcal > strong')).toContainText('700');
+  await expect(page.locator('.nutrition-kcal > strong')).toContainText('625');
+  await expect(page.getByText('0,25 porsiyon', { exact: true })).toBeVisible();
   await expect(
     page.getByText('1 kayıtta makro bilgisi eksik; toplamlar yalnızca girilen değerleri içerir.'),
   ).toBeVisible();
   await page.reload();
-  await expect(page.locator('.nutrition-kcal > strong')).toContainText('700');
+  await expect(page.locator('.nutrition-kcal > strong')).toContainText('625');
   const accessibility = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
     .analyze();
